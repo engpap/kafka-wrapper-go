@@ -1,4 +1,4 @@
-package kafkawrapper
+package pkg
 
 import (
 	"bufio"
