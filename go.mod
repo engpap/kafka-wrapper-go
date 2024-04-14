@@ -1,4 +1,4 @@
-module eval-sys-pkg
+module github.com/engpap/kafka-wrapper-go
 
 go 1.21.5
 
