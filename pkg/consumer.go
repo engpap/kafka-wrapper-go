@@ -31,7 +31,7 @@ type MessageHandler func(action_type string, message interface{})
 //
 // HANDLING MESSAGES
 // The function consumerMessageHandler is called to consume messages from the topic.
-func CreateConsumer(topic string, handler MessageHandler) {
+func CreateConsumer(topic string, handler MessageHandler, microserviceName string) {
 	if len(os.Args) != 2 {
 		fmt.Fprint(os.Stderr, "Usage: %s <config-file-path>\n", os.Args[0])
 		os.Exit(1)
@@ -39,7 +39,11 @@ func CreateConsumer(topic string, handler MessageHandler) {
 	configFile := os.Args[1] // this can be either getting-started.properties or client.properties
 
 	conf := ReadConfig(configFile)
-	conf["group.id"] = "evaluation-sys"
+	// For each microservice, we create a new consumer group
+	// This ensures that each microservice has a unique partition assignment for a topic
+	// If we don't do this then a message will be consumed by only one of the microservices that are subscribed to the topic
+	// To ensure that all subribers receive the message, we assign them a unique partition, which can be done by creating a unique consumer group
+	conf["group.id"] = fmt.Sprintf("evaluation-sys-%s", microserviceName)
 	conf["auto.offset.reset"] = "earliest"
 
 	c, err := kafka.NewConsumer(&conf)
