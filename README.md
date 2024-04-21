@@ -50,7 +50,7 @@ To create a consumer, use the `CreateConsumer` function. This function takes the
 ```go
 go kafkaWrapper.CreateConsumer("<topic-name>", callbackFunction, "<microservice-name>")
 ```
-
+The microservice name is used to configure the `group.id` of the consumer. Each microservice should have a unique `group.id`. This will allow to have multiple consumers listening to the same topic without losing messages.
 
 ### Callback Function
 It's a function of the following type:
