@@ -87,6 +87,9 @@ It can be one of the following:
 - `add`
 - `delete`
 
+# Example
+To see how this package can be used, check the [evaluation-sys-kafka](https://github.com/engpap/evaluation-sys-kafka).
+
 
 
 # Instructions for developers
