@@ -17,7 +17,10 @@ type MessageHandler func(action_type string, message interface{})
 // CreateConsumer creates a Kafka consumer and subscribes to a topic.
 //
 // CONFIGS
-// The consumer group ID is set to "evaluation-sys".
+// The consumer group ID is set to "evaluation-sys-<microserviceName>". This ensures that each microservice has a unique partition assignment for a topic.
+// If we don't do this then a message will be consumed by only one of the microservices that are subscribed to the topic.
+// To ensure that all subribers receive the message, we assign them a unique partition, which can be done by creating a unique consumer group.
+//
 // The auto.offset.reset is set to "earliest" to consume all messages from the beginning of the history.
 // auto.offset.reset can be either "earliest" or "latest". However, if the group.id is the same, the two options are equivalent.
 // Because the consumer group has committed offsets before shutting down, upon restarting, it resumes from those offsets.
@@ -40,9 +43,6 @@ func CreateConsumer(topic string, handler MessageHandler, microserviceName strin
 
 	conf := ReadConfig(configFile)
 	// For each microservice, we create a new consumer group
-	// This ensures that each microservice has a unique partition assignment for a topic
-	// If we don't do this then a message will be consumed by only one of the microservices that are subscribed to the topic
-	// To ensure that all subribers receive the message, we assign them a unique partition, which can be done by creating a unique consumer group
 	conf["group.id"] = fmt.Sprintf("evaluation-sys-%s", microserviceName)
 	conf["auto.offset.reset"] = "earliest"
 
